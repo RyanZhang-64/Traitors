@@ -7,7 +7,7 @@ import { RevealCard } from '../components/RevealCard';
 type RoundTableStep = 'intro' | 'discussion' | 'vote' | 'reveal' | 'banish';
 
 export const RoundTable: React.FC = () => {
-  const { players, conclave, banishPlayer, setStage, scheduler, advanceChooserQueue } = useStore();
+  const { players, conclave, banishPlayer, setStage, scheduler } = useStore();
   const [step, setStep] = useState<RoundTableStep>('intro');
   const [discussionTime, setDiscussionTime] = useState(240); // 4 min default
   const [votes, setVotes] = useState<Record<string, string>>({});
@@ -52,13 +52,10 @@ export const RoundTable: React.FC = () => {
   const handleBanish = () => {
     if (!banishedId) return;
     banishPlayer(banishedId);
-    advanceChooserQueue();
     setStage('hub');
   };
 
   const handleNoVote = () => {
-    // No consensus — continue without banishment
-    advanceChooserQueue();
     setStage('hub');
   };
 

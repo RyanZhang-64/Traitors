@@ -17,13 +17,13 @@ export const AlibiBuilder: React.FC<AlibiBuilderProps> = ({ onComplete }) => {
   const [pairs] = useState<[string, string][]>(() => {
     const result: [string, string][] = [];
     const ids = alivePlayers.map(p => p.id);
-    const startIdx = ids.length % 2 === 1 ? 1 : 0; // skip first if odd (it joins the trio)
-    if (ids.length % 2 === 1 && ids.length >= 3) {
-      // Trio from the last 3 — we represent as two pairs sharing a partner for cross-exam
+    const isOdd = ids.length % 2 === 1;
+    if (isOdd && ids.length >= 3) {
+      // Last 3 form a shared-partner trio (middle person questioned twice)
       result.push([ids[ids.length - 3], ids[ids.length - 2]]);
-      result.push([ids[ids.length - 2], ids[ids.length - 1]]); // middle person questioned twice
+      result.push([ids[ids.length - 2], ids[ids.length - 1]]);
     }
-    for (let i = startIdx; i < ids.length - (ids.length % 2 === 1 ? 3 : 0); i += 2) {
+    for (let i = 0; i < ids.length - (isOdd ? 3 : 0); i += 2) {
       result.push([ids[i], ids[i + 1]]);
     }
     return result;

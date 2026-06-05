@@ -5,7 +5,7 @@ import { VoteBoard } from '../components/VoteBoard';
 type FinaleStep = 'intro' | 'discussion' | 'vote' | 'reveal';
 
 export const Finale: React.FC = () => {
-  const { players, conclave, traitorIds, setStage } = useStore();
+  const { players, conclave, traitorIds, banishPlayer, setStage } = useStore();
   const [step, setStep] = useState<FinaleStep>('intro');
   const [votes, setVotes] = useState<Record<string, string>>({});
   const [embers, setEmbers] = useState<{ id: number; x: number; delay: number }[]>([]);
@@ -49,6 +49,33 @@ export const Finale: React.FC = () => {
       setEmbers(particles);
     }
   }, [step]);
+
+  // Faithful-win by elimination: all traitors already banished before finale
+  if (traitorFinalists.length === 0 && step !== 'reveal') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 stage-enter">
+        <div className="max-w-md text-center space-y-8">
+          <div className="text-6xl">🛡️</div>
+          <h1
+            className="font-display text-5xl font-bold candle-flicker"
+            style={{ color: 'var(--sage)', textShadow: '0 0 40px rgba(111,143,106,0.6)' }}
+          >
+            The Faithful Triumph!
+          </h1>
+          <p style={{ color: 'var(--ink)' }}>
+            Every Traitor has been unmasked and banished. The Faithful claim victory!
+          </p>
+          <button
+            className="w-full py-4 rounded-xl font-display text-xl font-bold"
+            style={{ backgroundColor: 'var(--flame)', color: '#14110E' }}
+            onClick={() => setStage('recap')}
+          >
+            View Recap →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (step === 'intro') {
     return (
@@ -254,7 +281,10 @@ export const Finale: React.FC = () => {
         <button
           className="w-full py-4 rounded-xl font-display text-xl font-bold"
           style={{ backgroundColor: 'var(--flame)', color: '#14110E' }}
-          onClick={() => setStage('recap')}
+          onClick={() => {
+            if (banishedPlayer) banishPlayer(banishedPlayer.id);
+            setStage('recap');
+          }}
         >
           View Recap →
         </button>

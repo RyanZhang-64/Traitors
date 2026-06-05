@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface CountdownRingProps {
   totalSeconds: number;
@@ -18,6 +18,8 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
   paused = false,
 }) => {
   const [remaining, setRemaining] = useState(totalSeconds);
+  const onExpireRef = useRef(onExpire);
+  useEffect(() => { onExpireRef.current = onExpire; });
 
   useEffect(() => {
     setRemaining(totalSeconds);
@@ -26,21 +28,14 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
   useEffect(() => {
     if (paused) return;
     if (remaining <= 0) {
-      onExpire?.();
+      onExpireRef.current?.();
       return;
     }
     const interval = setInterval(() => {
-      setRemaining((r) => {
-        if (r <= 1) {
-          clearInterval(interval);
-          onExpire?.();
-          return 0;
-        }
-        return r - 1;
-      });
+      setRemaining((r) => Math.max(0, r - 1));
     }, 1000);
     return () => clearInterval(interval);
-  }, [remaining, paused, onExpire]);
+  }, [remaining, paused]);
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;

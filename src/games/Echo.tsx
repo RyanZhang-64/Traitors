@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import { ScoreService } from '../services/ScoreService';
 import type { GameResult } from '../store/useStore';
@@ -33,6 +33,9 @@ export const Echo: React.FC<EchoProps> = ({ onComplete }) => {
 
   const activePlayers = alivePlayers.filter(p => !eliminated.includes(p.id));
   const currentPlayer = activePlayers[playerIdx % Math.max(1, activePlayers.length)];
+  const pendingTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => () => { pendingTimers.current.forEach(clearTimeout); }, []);
 
   const startNewRound = () => {
     const newColor = COLORS[Math.floor(Math.random() * COLORS.length)];
@@ -45,22 +48,24 @@ export const Echo: React.FC<EchoProps> = ({ onComplete }) => {
   };
 
   const playSequence = (seq: string[]) => {
+    pendingTimers.current.forEach(clearTimeout);
+    pendingTimers.current = [];
     let delay = 600;
     seq.forEach((color, i) => {
-      setTimeout(() => {
+      pendingTimers.current.push(setTimeout(() => {
         setActiveColor(color);
         setPlayingSequenceIdx(i);
-      }, delay);
-      setTimeout(() => {
+      }, delay));
+      pendingTimers.current.push(setTimeout(() => {
         setActiveColor(null);
         setPlayingSequenceIdx(-1);
-      }, delay + 500);
+      }, delay + 500));
       delay += 800;
     });
-    setTimeout(() => {
+    pendingTimers.current.push(setTimeout(() => {
       setPhase('repeat');
       setActiveColor(null);
-    }, delay);
+    }, delay));
   };
 
   const handleColorPress = (color: string) => {

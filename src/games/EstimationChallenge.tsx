@@ -12,7 +12,7 @@ export const EstimationChallenge: React.FC<EstimationChallengeProps> = ({ onComp
   const { players, conclave } = useStore();
   const alivePlayers = players.filter((p) => conclave.aliveIds.includes(p.id));
 
-  const questions = [...masterBank.estimation].sort(() => Math.random() - 0.5).slice(0, 6);
+  const [questions] = useState(() => [...masterBank.estimation].sort(() => Math.random() - 0.5).slice(0, 6));
   const [qIdx, setQIdx] = useState(0);
   const [guesses, setGuesses] = useState<Record<string, number>>({});
   const [allGuesses, setAllGuesses] = useState<Record<string, Record<string, number>>>({});
