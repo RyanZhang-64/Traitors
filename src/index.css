@@ -32,6 +32,10 @@ html, body, #root {
   overflow: hidden;
 }
 
+#root {
+  overflow-y: auto;
+}
+
 body::before {
   content: '';
   position: fixed;

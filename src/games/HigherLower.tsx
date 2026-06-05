@@ -47,7 +47,7 @@ export const HigherLower: React.FC<HigherLowerProps> = ({ onComplete }) => {
     setTimeout(() => {
       setRevealed(false);
       setFeedback('');
-      if (currentIdx + 1 >= chain.length - 1) {
+      if (currentIdx + 1 >= chain.length - 1) { // after advancing, no more next items
         setGameOver(true);
       } else {
         setCurrentIdx(currentIdx + 1);

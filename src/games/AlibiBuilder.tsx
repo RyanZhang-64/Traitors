@@ -12,11 +12,22 @@ export const AlibiBuilder: React.FC<AlibiBuilderProps> = ({ onComplete }) => {
   const { players, conclave } = useStore();
   const alivePlayers = players.filter((p) => conclave.aliveIds.includes(p.id));
 
-  const scenario = alibiScenarios[Math.floor(Math.random() * alibiScenarios.length)];
-  const pairs: [string, string][] = [];
-  for (let i = 0; i < Math.floor(alivePlayers.length / 2) * 2; i += 2) {
-    pairs.push([alivePlayers[i].id, alivePlayers[i + 1]?.id || alivePlayers[0].id]);
-  }
+  const [scenario] = useState(() => alibiScenarios[Math.floor(Math.random() * alibiScenarios.length)]);
+  // Spec §3.3: odd player count → one trio (last 3 players), rest form pairs
+  const [pairs] = useState<[string, string][]>(() => {
+    const result: [string, string][] = [];
+    const ids = alivePlayers.map(p => p.id);
+    const startIdx = ids.length % 2 === 1 ? 1 : 0; // skip first if odd (it joins the trio)
+    if (ids.length % 2 === 1 && ids.length >= 3) {
+      // Trio from the last 3 — we represent as two pairs sharing a partner for cross-exam
+      result.push([ids[ids.length - 3], ids[ids.length - 2]]);
+      result.push([ids[ids.length - 2], ids[ids.length - 1]]); // middle person questioned twice
+    }
+    for (let i = startIdx; i < ids.length - (ids.length % 2 === 1 ? 3 : 0); i += 2) {
+      result.push([ids[i], ids[i + 1]]);
+    }
+    return result;
+  });
 
   const [pairIdx, setPairIdx] = useState(0);
   const [phase, setPhase] = useState<'read' | 'plan' | 'crossexam' | 'vote' | 'reveal'>('read');

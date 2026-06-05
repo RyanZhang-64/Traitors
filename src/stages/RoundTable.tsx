@@ -13,6 +13,7 @@ export const RoundTable: React.FC = () => {
   const [votes, setVotes] = useState<Record<string, string>>({});
   const [banishedId, setBanishedId] = useState<string | null>(null);
   const [revealedChips, setRevealedChips] = useState<string[]>([]);
+  const [tieBreak, setTieBreak] = useState<string | null>(null);
 
   const alivePlayers = players.filter((p) => conclave.aliveIds.includes(p.id));
 
@@ -35,11 +36,14 @@ export const RoundTable: React.FC = () => {
       delay += 800;
     });
 
-    // Determine banished (most votes)
-    const banished = Object.entries(sorted).sort((a, b) => b[1] - a[1])[0];
-    if (banished) {
+    // Determine banished (most votes); break ties randomly
+    const maxVotes = Math.max(...Object.values(sorted));
+    const tied = Object.entries(sorted).filter(([, v]) => v === maxVotes).map(([id]) => id);
+    const chosenId = tied[Math.floor(Math.random() * tied.length)];
+    if (tied.length > 1) setTieBreak(chosenId);
+    if (chosenId) {
       setTimeout(() => {
-        setBanishedId(banished[0]);
+        setBanishedId(chosenId);
         setStep('banish');
       }, delay + 500);
     }
@@ -240,6 +244,11 @@ export const RoundTable: React.FC = () => {
         <p className="text-xl" style={{ color: 'var(--ink)' }}>
           <span style={{ color: 'var(--flame)' }}>{banishedPlayer.name}</span> is cast out of the castle.
         </p>
+        {tieBreak && (
+          <p className="text-sm" style={{ color: 'var(--muted)' }}>
+            ⚖️ Tie broken by lot
+          </p>
+        )}
 
         <div className="flex justify-center">
           <RevealCard

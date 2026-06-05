@@ -13,7 +13,7 @@ export const KnightsKnaves: React.FC<KnightsKnavesProps> = ({ onComplete }) => {
   const difficulty = (activeGame?.difficulty || 'medium') as 'easy' | 'medium' | 'hard';
 
   const puzzles = masterBank.knights_knaves.filter((p) => p.difficulty === difficulty);
-  const puzzle = puzzles[Math.floor(Math.random() * puzzles.length)] || masterBank.knights_knaves[0];
+  const [puzzle] = useState(() => puzzles[Math.floor(Math.random() * puzzles.length)] || masterBank.knights_knaves[0]);
 
   const [guesses, setGuesses] = useState<Record<string, string>>({ A: '', B: '', C: '' });
   const [submitted, setSubmitted] = useState(false);

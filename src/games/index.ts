@@ -4,10 +4,10 @@ export type { GameModule };
 
 export const gameRegistry: GameModule[] = [
   // 6A Deduction
-  { id: 'knights_knaves', title: 'Knights & Knaves', type: 'deduction', tagline: 'Logic puzzles — who speaks truth?', estMinutes: 8, minPlayers: 4, maxPlayers: 10, energy: 'low' },
+  { id: 'knights_knaves', title: 'Knights & Knaves', type: 'deduction', tagline: 'Logic puzzles — who speaks truth?', estMinutes: 8, minPlayers: 3, maxPlayers: 10, energy: 'low' },
   { id: 'mini_einstein', title: 'Mini-Einstein', type: 'deduction', tagline: 'Solve the 4-house grid puzzle', estMinutes: 10, minPlayers: 4, maxPlayers: 10, energy: 'low' },
   { id: 'whodunnit', title: 'Whodunnit', type: 'deduction', tagline: 'Crack the mystery grid', estMinutes: 10, minPlayers: 4, maxPlayers: 10, energy: 'low' },
-  { id: 'code_breaker', title: 'Code Breaker', type: 'deduction', tagline: 'Deduce the secret code from clues', estMinutes: 7, minPlayers: 4, maxPlayers: 10, energy: 'medium' },
+  { id: 'code_breaker', title: 'Code Breaker', type: 'deduction', tagline: 'Deduce the secret code from clues', estMinutes: 7, minPlayers: 2, maxPlayers: 10, energy: 'medium' },
 
   // 6B Trivia
   { id: 'lateral_mystery', title: 'Lateral Mystery', type: 'trivia', tagline: 'Solve a mystery by yes/no questions', estMinutes: 8, minPlayers: 4, maxPlayers: 10, energy: 'medium' },
@@ -22,11 +22,11 @@ export const gameRegistry: GameModule[] = [
   { id: 'balderdash', title: 'Balderdash', type: 'word', tagline: 'Bluff your way with fake definitions', estMinutes: 10, minPlayers: 5, maxPlayers: 10, energy: 'medium' },
   { id: 'codenames_lite', title: 'Codenames-Lite', type: 'word', tagline: '5×5 word grid — clues, teams, guesses', estMinutes: 12, minPlayers: 6, maxPlayers: 10, energy: 'high' },
   { id: 'taboo', title: 'Taboo', type: 'word', tagline: "Describe it — without the forbidden words!", estMinutes: 10, minPlayers: 4, maxPlayers: 10, energy: 'high' },
-  { id: 'word_chain', title: 'Word Chain', type: 'word', tagline: 'Last letter starts the next word', estMinutes: 6, minPlayers: 4, maxPlayers: 10, energy: 'medium' },
+  { id: 'word_chain', title: 'Word Chain', type: 'word', tagline: 'Last letter starts the next word', estMinutes: 6, minPlayers: 3, maxPlayers: 10, energy: 'medium' },
 
   // 6D Estimation
   { id: 'estimation_challenge', title: 'Estimation Challenge', type: 'estimation', tagline: 'Guess closest to the real number', estMinutes: 8, minPlayers: 4, maxPlayers: 10, energy: 'low' },
-  { id: 'higher_lower', title: 'Higher or Lower', type: 'estimation', tagline: 'Beat the chain — higher or lower?', estMinutes: 7, minPlayers: 4, maxPlayers: 10, energy: 'medium' },
+  { id: 'higher_lower', title: 'Higher or Lower', type: 'estimation', tagline: 'Beat the chain — higher or lower?', estMinutes: 7, minPlayers: 2, maxPlayers: 10, energy: 'medium' },
   { id: 'price_is_right', title: 'The Price Is Right', type: 'estimation', tagline: "Closest without going over wins", estMinutes: 8, minPlayers: 4, maxPlayers: 10, energy: 'medium' },
 
   // 6E Creative

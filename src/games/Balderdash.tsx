@@ -12,7 +12,9 @@ export const Balderdash: React.FC<BalderdashProps> = ({ onComplete }) => {
   const { players, conclave } = useStore();
   const alivePlayers = players.filter((p) => conclave.aliveIds.includes(p.id));
 
-  const words = [...masterBank.balderdash.words].sort(() => Math.random() - 0.5).slice(0, 3);
+  const [words] = useState(() =>
+    [...masterBank.balderdash.words].sort(() => Math.random() - 0.5).slice(0, 3)
+  );
   const [wordIdx, setWordIdx] = useState(0);
   const [phase, setPhase] = useState<'submit' | 'vote' | 'reveal'>('submit');
   const [definitions, setDefinitions] = useState<Record<string, string>>({});

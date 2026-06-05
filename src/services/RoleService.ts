@@ -10,7 +10,8 @@ export class RoleService {
   }
 
   static getTraitorCount(playerCount: number): number {
-    if (playerCount <= 7) return 2;
+    // Spec table: 6-8 players → 2 traitors; 9-10 players → 3 traitors
+    if (playerCount <= 8) return 2;
     return 3;
   }
 

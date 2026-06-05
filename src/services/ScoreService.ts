@@ -29,7 +29,8 @@ export class ScoreService {
     const ranked = this.rankPlayers(scores);
     const deltas: Record<string, number> = {};
     const n = players.length;
-    const underdogThreshold = Math.floor(n * 2 / 3);
+    // Bottom third: players ranked in the bottom 1/3 of total participants
+    const bottomThirdStart = n - Math.floor(n / 3) + 1;
 
     ranked.forEach((entry) => {
       let coins = 0;
@@ -38,8 +39,8 @@ export class ScoreService {
       else if (entry.rank === 3) coins = this.COINS_3RD;
       else if (entry.score > 0) coins = this.COINS_CORRECT;
 
-      // Underdog bonus
-      if (entry.rank > underdogThreshold && entry.rank <= 3) {
+      // Underdog bonus: bottom-third players earn +1 extra on any top-3 finish
+      if (entry.rank >= bottomThirdStart && entry.rank <= 3) {
         coins += this.UNDERDOG_BONUS;
       }
 

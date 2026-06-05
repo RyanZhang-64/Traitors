@@ -15,7 +15,11 @@ export interface GameModule {
 
 export class Scheduler {
   static shouldGoToFinale(state: SessionState): boolean {
-    return state.conclave.aliveIds.length <= 3 && state.conclave.aliveIds.length > 0;
+    // Traitors win if a Traitor reaches the Final Circle (≤3 alive in Conclave)
+    if (state.conclave.aliveIds.length <= 3 && state.conclave.aliveIds.length > 0) return true;
+    // Faithful win if ALL Traitors are banished (regardless of how many alive remain)
+    if (state.traitorIds.length > 0 && state.traitorIds.every(id => state.conclave.ghostIds.includes(id))) return true;
+    return false;
   }
 
   static shouldGoToIntermission(state: SessionState): boolean {
@@ -25,10 +29,11 @@ export class Scheduler {
   }
 
   static shouldGoToRoundTable(state: SessionState): boolean {
-    return (
-      state.scheduler.challengesSinceRT >= 3 &&
-      state.scheduler.minutesSinceRT >= 22
-    );
+    // Primary trigger: 3+ challenges AND 22+ minutes since last RT
+    if (state.scheduler.challengesSinceRT >= 3 && state.scheduler.minutesSinceRT >= 22) return true;
+    // Hard ceiling: force RT if 32+ minutes have passed regardless of challenge count
+    if (state.scheduler.minutesSinceRT >= 32) return true;
+    return false;
   }
 
   static getNextStage(state: SessionState): Stage {
@@ -44,7 +49,8 @@ export class Scheduler {
     count = 3
   ): GameModule[] {
     const { conclave, scheduler } = state;
-    const n = conclave.aliveIds.length;
+    // All non-eliminated players (active + ghost) participate in challenges
+    const n = conclave.aliveIds.length + conclave.ghostIds.length;
     const elapsed = (Date.now() - scheduler.startedAt) / 60000;
     const isEarly = elapsed < state.config.targetMinutes * 0.33;
     const isLate = elapsed > state.config.targetMinutes * 0.66;
@@ -56,11 +62,19 @@ export class Scheduler {
       return true;
     });
 
-    // Bias difficulty
+    // Bias toward low-energy early, high-energy late — proper two-arg comparator
     if (isEarly) {
-      available = available.sort((a) => (a.energy === 'low' ? -1 : 1));
+      available = [...available].sort((a, b) => {
+        const va = a.energy === 'low' ? 0 : a.energy === 'medium' ? 1 : 2;
+        const vb = b.energy === 'low' ? 0 : b.energy === 'medium' ? 1 : 2;
+        return va - vb;
+      });
     } else if (isLate) {
-      available = available.sort((a) => (a.energy === 'high' ? -1 : 1));
+      available = [...available].sort((a, b) => {
+        const va = a.energy === 'high' ? 0 : a.energy === 'medium' ? 1 : 2;
+        const vb = b.energy === 'high' ? 0 : b.energy === 'medium' ? 1 : 2;
+        return va - vb;
+      });
     }
 
     // Avoid same type as last 2

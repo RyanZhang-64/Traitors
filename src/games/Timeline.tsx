@@ -12,9 +12,8 @@ export const Timeline: React.FC<TimelineProps> = ({ onComplete }) => {
   const { players, conclave } = useStore();
   const alivePlayers = players.filter((p) => conclave.aliveIds.includes(p.id));
 
-  const data = masterBank.timeline[Math.floor(Math.random() * masterBank.timeline.length)];
-  const shuffled = [...data.items_shuffled].sort(() => Math.random() - 0.5);
-  const [order, setOrder] = useState<string[]>(shuffled);
+  const [data] = useState(() => masterBank.timeline[Math.floor(Math.random() * masterBank.timeline.length)]);
+  const [order, setOrder] = useState<string[]>(() => [...data.items_shuffled].sort(() => Math.random() - 0.5));
   const [playerIndex, setPlayerIndex] = useState(0);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -81,7 +80,7 @@ export const Timeline: React.FC<TimelineProps> = ({ onComplete }) => {
             <div key={p.id} className="flex justify-between p-3 rounded-lg"
               style={{ backgroundColor: 'var(--bg-raise)', border: '1px solid rgba(182,168,146,0.15)' }}>
               <span style={{ color: 'var(--ink)' }}>{p.name}</span>
-              <span style={{ color: 'var(--flame)' }}>{scores[p.id] || 0}/{shuffled.length} {coinDeltas[p.id] ? `· +${coinDeltas[p.id]}` : ''}</span>
+              <span style={{ color: 'var(--flame)' }}>{scores[p.id] || 0}/{data.correct_order.length} {coinDeltas[p.id] ? `· +${coinDeltas[p.id]}` : ''}</span>
             </div>
           ))}
         </div>

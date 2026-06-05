@@ -173,7 +173,7 @@ export const useStore = create<SessionState & StoreActions>((set, get) => ({
   initRoles: () => {
     const { players, config } = get();
     const n = players.length;
-    const numTraitors = config.mode === 'party' ? 0 : n <= 7 ? 2 : 3;
+    const numTraitors = config.mode === 'party' ? 0 : n <= 8 ? 2 : 3;
 
     const shuffled = shuffleArray(players.map((p) => p.id));
     const traitorIds = shuffled.slice(0, numTraitors);
@@ -234,9 +234,23 @@ export const useStore = create<SessionState & StoreActions>((set, get) => ({
     const newCoins = { ...s.league.coins };
     updatedPlayers.forEach((p) => { newCoins[p.id] = p.coins; });
 
-    // Update scheduler
+    // Update scheduler — record this game's type so variety rule can enforce no-3-in-a-row
     const newRecentIds = [result.moduleId, ...s.scheduler.recentGameIds].slice(0, 4);
-    const newLastTypes: string[] = s.scheduler.lastTypes.slice(-2);
+    const currentModule = import.meta.env ? null : null; // type looked up below
+    const gameType = (s.activeGame?.moduleId)
+      ? ((['knights_knaves','mini_einstein','whodunnit','code_breaker'].includes(s.activeGame.moduleId) ? 'deduction'
+        : ['lateral_mystery','sabotage_trivia','category_roulette','timeline','zoomed_in','name_that_tune'].includes(s.activeGame.moduleId) ? 'trivia'
+        : ['anagram_race','balderdash','codenames_lite','taboo','word_chain'].includes(s.activeGame.moduleId) ? 'word'
+        : ['estimation_challenge','higher_lower','price_is_right'].includes(s.activeGame.moduleId) ? 'estimation'
+        : ['gartic_phone','quick_draw'].includes(s.activeGame.moduleId) ? 'creative'
+        : ['emoji_story','spot_the_change','echo','eyewitness'].includes(s.activeGame.moduleId) ? 'memory'
+        : ['reaction_duel','type_racer','simon_says'].includes(s.activeGame.moduleId) ? 'reflex'
+        : 'social'))
+      : '';
+    void currentModule; // suppress unused warning
+    const newLastTypes = gameType
+      ? [...s.scheduler.lastTypes, gameType].slice(-3)
+      : s.scheduler.lastTypes.slice(-3);
 
     set({
       players: updatedPlayers,
@@ -287,7 +301,12 @@ export const useStore = create<SessionState & StoreActions>((set, get) => ({
     const elapsed = (Date.now() - s.scheduler.startedAt) / 60000;
     const aliveCount = s.conclave.aliveIds.length;
 
-    // Check finale condition
+    // Faithful win: all traitors have been banished
+    if (s.traitorIds.length > 0 && s.traitorIds.every(id => s.conclave.ghostIds.includes(id))) {
+      return 'finale';
+    }
+
+    // Traitors win condition: a traitor reaches the Final Circle (≤3 alive)
     if (aliveCount <= 3 && aliveCount > 0) {
       return 'finale';
     }
@@ -297,8 +316,9 @@ export const useStore = create<SessionState & StoreActions>((set, get) => ({
       return 'intermission';
     }
 
-    // Check round table
-    if (s.scheduler.challengesSinceRT >= 3 && s.scheduler.minutesSinceRT >= 22) {
+    // Check round table — primary trigger OR hard 32-min ceiling
+    if ((s.scheduler.challengesSinceRT >= 3 && s.scheduler.minutesSinceRT >= 22)
+        || s.scheduler.minutesSinceRT >= 32) {
       return 'roundTable';
     }
 
@@ -383,12 +403,15 @@ export const useStore = create<SessionState & StoreActions>((set, get) => ({
   },
 
   advanceChooserQueue: () => {
-    const { scheduler, conclave } = get();
-    const alive = conclave.aliveIds;
-    if (alive.length === 0) return;
-    const queue = scheduler.chooserQueue.filter((id) => alive.includes(id));
+    const { scheduler, players } = get();
+    // Spec §4.2: rotate over ALL players including Ghosts; only exclude 'out'
+    const eligible = players
+      .filter((p) => p.status === 'active' || p.status === 'ghost' || p.status === 'finalist')
+      .map((p) => p.id);
+    if (eligible.length === 0) return;
+    const queue = scheduler.chooserQueue.filter((id) => eligible.includes(id));
     if (queue.length === 0) {
-      const newQueue = shuffleArray(alive);
+      const newQueue = shuffleArray(eligible);
       set((s) => ({
         scheduler: {
           ...s.scheduler,

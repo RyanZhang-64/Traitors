@@ -12,8 +12,9 @@ export const AnagramRace: React.FC<AnagramRaceProps> = ({ onComplete }) => {
   const { players, conclave } = useStore();
   const alivePlayers = players.filter((p) => conclave.aliveIds.includes(p.id));
 
-  const allAnagrams = masterBank.anagram_race;
-  const rounds = [...allAnagrams].sort(() => Math.random() - 0.5).slice(0, 8);
+  const [rounds] = useState(() =>
+    [...masterBank.anagram_race].sort(() => Math.random() - 0.5).slice(0, 8)
+  );
 
   const [roundIdx, setRoundIdx] = useState(0);
   const [input, setInput] = useState('');
