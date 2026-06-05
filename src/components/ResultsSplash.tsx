@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Player } from '../store/useStore';
-import { GameResult } from '../store/useStore';
+import type { Player } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface ResultsSplashProps {
   result: GameResult;

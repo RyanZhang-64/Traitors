@@ -1,4 +1,4 @@
-import { SessionState, Stage } from '../store/useStore';
+import type { SessionState, Stage } from '../store/useStore';
 
 export interface GameModule {
   id: string;

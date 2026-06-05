@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { drawCards } from '../data/drawCards';
 import { ScoreService } from '../services/ScoreService';
-import { GameResult } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface QuickDrawProps {
   onComplete: (result: GameResult) => void;

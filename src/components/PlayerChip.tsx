@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player } from '../store/useStore';
+import type { Player } from '../store/useStore';
 
 interface PlayerChipProps {
   player: Player;

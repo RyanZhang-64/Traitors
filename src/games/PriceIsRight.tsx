@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { ScoreService } from '../services/ScoreService';
-import { GameResult } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface PriceIsRightProps {
   onComplete: (result: GameResult) => void;

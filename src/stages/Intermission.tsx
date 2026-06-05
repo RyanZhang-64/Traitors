@@ -62,7 +62,7 @@ export const Intermission: React.FC = () => {
           >
             <h2 className="font-display text-lg" style={{ color: 'var(--flame)' }}>League Standings</h2>
           </div>
-          <div className="divide-y" style={{ divideColor: 'rgba(182,168,146,0.1)' }}>
+          <div className="divide-y divide-[rgba(182,168,146,0.1)]">
             {sortedPlayers.map((p, i) => (
               <div
                 key={p.id}

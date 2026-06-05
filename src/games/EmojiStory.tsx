@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { emojiPrompts } from '../data/emojiPrompts';
 import { ScoreService } from '../services/ScoreService';
-import { GameResult } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface EmojiStoryProps {
   onComplete: (result: GameResult) => void;

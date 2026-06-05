@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { lateralPuzzles } from '../data/lateralPuzzles';
 import { ScoreService } from '../services/ScoreService';
-import { GameResult } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface LateralMysteryProps {
   onComplete: (result: GameResult) => void;

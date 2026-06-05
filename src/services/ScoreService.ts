@@ -1,4 +1,4 @@
-import { Player } from '../store/useStore';
+import type { Player } from '../store/useStore';
 
 export interface ScoreEntry {
   playerId: string;

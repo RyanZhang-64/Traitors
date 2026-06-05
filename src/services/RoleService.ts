@@ -1,4 +1,4 @@
-import { Player, Role } from '../store/useStore';
+import type { Player, Role } from '../store/useStore';
 
 export class RoleService {
   static assignRoles(players: Player[], numTraitors: number): { playerId: string; role: Role }[] {

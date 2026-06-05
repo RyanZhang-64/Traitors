@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { codenamesWords } from '../data/wordlist';
 import { ScoreService } from '../services/ScoreService';
-import { GameResult } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface CodenamesLiteProps {
   onComplete: (result: GameResult) => void;

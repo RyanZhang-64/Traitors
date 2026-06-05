@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { masterBank } from '../data/masterBank';
 import { ScoreService } from '../services/ScoreService';
-import { GameResult } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface TimelineProps {
   onComplete: (result: GameResult) => void;
@@ -67,13 +67,14 @@ export const Timeline: React.FC<TimelineProps> = ({ onComplete }) => {
         <h2 className="font-display text-3xl font-bold" style={{ color: 'var(--flame)' }}>Timeline Complete!</h2>
         <div className="space-y-2 text-sm w-full max-w-sm">
           <p className="font-bold" style={{ color: 'var(--muted)' }}>Correct order:</p>
-          {data.correct_order.map((item, i) => (
-            <p key={i} className="text-xs" style={{ color: 'var(--ink)' }}>
-              {i + 1}. {item} <span style={{ color: 'var(--muted)' }}>({data.years[item as keyof typeof data.years] < 0
-                ? `${Math.abs(data.years[item as keyof typeof data.years])} BC`
-                : data.years[item as keyof typeof data.years]})</span>
-            </p>
-          ))}
+          {data.correct_order.map((item, i) => {
+            const yr = data.years[item as keyof typeof data.years] ?? 0;
+            return (
+              <p key={i} className="text-xs" style={{ color: 'var(--ink)' }}>
+                {i + 1}. {item} <span style={{ color: 'var(--muted)' }}>({yr < 0 ? `${Math.abs(yr)} BC` : yr})</span>
+              </p>
+            );
+          })}
         </div>
         <div className="w-full max-w-sm space-y-2">
           {alivePlayers.map((p) => (

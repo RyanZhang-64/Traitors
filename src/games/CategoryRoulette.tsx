@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { categoryRouletteCategories } from '../data/triviaQuestions';
 import { ScoreService } from '../services/ScoreService';
-import { GameResult } from '../store/useStore';
+import type { GameResult } from '../store/useStore';
 
 interface CategoryRouletteProps {
   onComplete: (result: GameResult) => void;

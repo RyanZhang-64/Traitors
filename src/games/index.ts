@@ -1,6 +1,6 @@
-import { GameModule } from '../services/Scheduler';
+import type { GameModule } from '../services/Scheduler';
 
-export { GameModule };
+export type { GameModule };
 
 export const gameRegistry: GameModule[] = [
   // 6A Deduction
